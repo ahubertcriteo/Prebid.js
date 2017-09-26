@@ -1,3 +1,4 @@
+var ajaxHelper = require('src/ajax.js');
 var bidfactory = require('src/bidfactory.js');
 var bidmanager = require('src/bidmanager.js');
 var adloader = require('src/adloader');
@@ -15,12 +16,13 @@ var CriteoAdapter = function CriteoAdapter() {
     if (!window.criteo_pubtag || window.criteo_pubtag instanceof Array) {
       // publisherTag not loaded yet
 
+      var xhrOptions = {
+        method: "GET"
+      };
+      ajaxHelper.ajax(_publisherTagUrl, function (responseText) {
+        window.eval(responseText);
+      }, undefined, xhrOptions);
       _pushBidRequestEvent(params);
-      adloader.loadScript(
-        _publisherTagUrl,
-        function () { },
-        true
-      );
     } else {
       // publisherTag already loaded
       _pushBidRequestEvent(params);
