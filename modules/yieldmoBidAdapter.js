@@ -19,7 +19,7 @@ var YieldmoAdapter = function YieldmoAdapter() {
 
   function buildYieldmoCall(bids) {
     // build our base tag, based on if we are http or https
-    var ymURI = '//bid.yieldmo.com/exchange/prebid?';
+    var ymURI = '//ads.yieldmo.com/exchange/prebid?';
     var ymCall = document.location.protocol + ymURI;
 
     // Placement specific information
@@ -51,6 +51,10 @@ var YieldmoAdapter = function YieldmoAdapter() {
       placement.placement_id = bid.placementCode;
       placement.sizes = bid.sizes;
 
+      if (bid.params && bid.params.placementId) {
+        placement.ym_placement_id = bid.params.placementId;
+      }
+
       placements.push(placement);
     }
 
@@ -64,7 +68,7 @@ var YieldmoAdapter = function YieldmoAdapter() {
     var dnt = (navigator.doNotTrack || false).toString(); // true if user enabled dnt (false by default)
     var _s = document.location.protocol === 'https:' ? 1 : 0; // 1 if page is secure
     var description = _getPageDescription();
-    var title = document.title || ''; // Value of the title from the publisher's page. 
+    var title = document.title || ''; // Value of the title from the publisher's page.
     var bust = new Date().getTime().toString(); // cache buster
     var scrd = window.devicePixelRatio || 0; // screen pixel density
 
@@ -83,7 +87,7 @@ var YieldmoAdapter = function YieldmoAdapter() {
 
   function _getPageDescription() {
     if (document.querySelector('meta[name="description"]')) {
-      return document.querySelector('meta[name="description"]').getAttribute('content'); // Value of the description metadata from the publisher's page.  
+      return document.querySelector('meta[name="description"]').getAttribute('content'); // Value of the description metadata from the publisher's page.
     } else {
       return '';
     }
@@ -97,7 +101,7 @@ var YieldmoAdapter = function YieldmoAdapter() {
       }
     } else {
       // If an incorrect response is returned, register error bids for all placements
-      // to prevent Prebid waiting till timeout for response 
+      // to prevent Prebid waiting till timeout for response
       _registerNoResponseBids();
 
       utils.logMessage('No prebid response for placement %%PLACEMENT%%');
